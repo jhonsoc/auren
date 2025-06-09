@@ -1,0 +1,48 @@
+/* eslint-disable prettier/prettier */
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { UsersService } from '../users/users.service';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { RolUsuario } from '../common/enums/role.enum';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async login(loginDto: LoginDto) {
+    const user = await this.usersService.findByDocumento(loginDto.documento);
+    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
+    const payload = {
+      sub: user.id,
+      documento: user.documento,
+      rol: user.rol,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async register(registerDto: RegisterDto) {
+  const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+  const user = await this.usersService.create({
+    ...registerDto,
+    password: hashedPassword,
+    rol: RolUsuario.SUPERADMIN, // ← asigna rol inicial aquí
+  });
+  return {
+    id: user.id,
+    documento: user.documento,
+    nombre: user.nombre,
+    rol: user.rol,
+  };
+}
+}
