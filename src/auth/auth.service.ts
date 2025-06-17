@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -9,20 +9,29 @@ import { RolUsuario } from '../common/enums/role.enum';
 
 @Injectable()
 export class AuthService {
+    private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
   async login(loginDto: LoginDto) {
+    this.logger.debug(`📥 Intentando login con: ${JSON.stringify(loginDto)}`);
+
     const user = await this.usersService.findByDocumento(loginDto.documento);
+    this.logger.debug(`🧾 Usuario encontrado: ${JSON.stringify(user)}`);
+
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
+      this.logger.warn('❌ Credenciales inválidas');
       throw new UnauthorizedException('Credenciales inválidas');
     }
+
+    this.logger.log(`✅ Login exitoso para ${user.documento}`);
 
     const payload = {
       sub: user.id,
       documento: user.documento,
+      nombre: user.nombre, 
       rol: user.rol,
     };
 

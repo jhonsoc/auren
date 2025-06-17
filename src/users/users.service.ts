@@ -19,4 +19,21 @@ export class UsersService {
     const user = this.usersRepository.create(data);
     return this.usersRepository.save(user);
   }
+
+  async findAll(): Promise<User[]> {
+    return this.usersRepository.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async update(id: string, data: Partial<User>): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new Error('Usuario no encontrado');
+    const actualizado = this.usersRepository.merge(user, data);
+    return this.usersRepository.save(actualizado);
+  }
+
+  async remove(id: string): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new Error('Usuario no encontrado');
+    return this.usersRepository.remove(user);
+  }
 }

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable prettier/prettier */
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { RolUsuario } from '../common/enums/role.enum';
+
 
 @Entity()
 export class User {
@@ -17,10 +18,16 @@ export class User {
   @Column()
   password: string;
 
+  @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+
    @Column({
     type: 'enum',
     enum: RolUsuario,
     default: RolUsuario.COLABORADOR,
   })
-  rol: RolUsuario;
+  rol: RolUsuario;;
 }

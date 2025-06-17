@@ -3,6 +3,7 @@
     "documento": "123456789",
     "nombre": "Sebastián",
     "rol": "superadmin"
+    Clave clave123
 }
 
 

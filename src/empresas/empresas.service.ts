@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Empresa } from './empresa.entity';
-import { UsuarioEmpresa } from '../usuario-empresa/usuario-empresa.entity';
+import { UsuarioEmpresa } from '../usuario-empresa/entities/usuario-empresa.entity';
 
 @Injectable()
 export class EmpresasService {
@@ -33,7 +33,7 @@ export class EmpresasService {
   }
 
   const relaciones = await this.usuarioEmpresaRepo.find({
-    where: { usuario: { id: usuarioId } },
+    where: { id: usuarioId  },
     relations: ['empresa'],
   });
 

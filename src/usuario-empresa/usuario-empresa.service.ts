@@ -1,9 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+// src/usuario-empresa/usuario-empresa.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UsuarioEmpresa } from './usuario-empresa.entity';
+import { UsuarioEmpresa } from './entities/usuario-empresa.entity';
+import { CreateUsuarioEmpresaDto } from './dto/create-usuario-empresa.dto';
+import { UpdateUsuarioEmpresaDto } from './dto/update-usuario-empresa.dto';
 
 @Injectable()
 export class UsuarioEmpresaService {
@@ -12,16 +14,29 @@ export class UsuarioEmpresaService {
     private readonly repo: Repository<UsuarioEmpresa>,
   ) {}
 
-  async vincular(usuarioId: string, empresaId: string): Promise<UsuarioEmpresa> {
-    return this.repo.save({
-      usuario: { id: usuarioId } as any,
-      empresa: { id: empresaId } as any,
-    });
+  create(dto: CreateUsuarioEmpresaDto) {
+    const nuevo = this.repo.create(dto);
+    return this.repo.save(nuevo);
   }
 
-  async obtenerEmpresasDelUsuario(usuarioId: string): Promise<UsuarioEmpresa[]> {
-    return this.repo.find({
-      where: { usuario: { id: usuarioId } },
-    });
+  findAll() {
+    return this.repo.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async findOne(id: string) {
+    const usuario = await this.repo.findOne({ where: { id } });
+    if (!usuario) throw new NotFoundException('Usuario no encontrado');
+    return usuario;
+  }
+
+  async update(id: string, dto: UpdateUsuarioEmpresaDto) {
+    const usuario = await this.findOne(id);
+    const actualizado = this.repo.merge(usuario, dto);
+    return this.repo.save(actualizado);
+  }
+
+  async remove(id: string) {
+    const usuario = await this.findOne(id);
+    return this.repo.remove(usuario);
   }
 }

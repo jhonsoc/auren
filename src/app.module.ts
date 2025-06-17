@@ -1,25 +1,37 @@
 /* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
+
+import { TestController } from './test/test.controller';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { RolesGuard } from './auth/roles.guard';
-import { APP_GUARD } from '@nestjs/core';
 import { EmpresasModule } from './empresas/empresas.module';
 import { UsuarioEmpresaModule } from './usuario-empresa/usuario-empresa.module';
 
+import { JwtAuthGuard } from './auth/auth.guard';
+import { RolesGuard } from './auth/roles.guard';
+
 @Module({
-  imports: [DatabaseModule, 
-    UsersModule, 
+  controllers: [TestController],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    UsersModule,
     AuthModule,
     EmpresasModule,
-    UsuarioEmpresaModule
+    UsuarioEmpresaModule,
   ],
-  providers: [
+  /*providers: [
+   {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard, // 🛡️ Se ejecuta primero
+    },
     {
       provide: APP_GUARD,
-      useClass: RolesGuard,
+      useClass: RolesGuard, // 🧠 Evalúa roles luego de inyectar el user
     },
-  ],
+  ],*/
 })
 export class AppModule {}
