@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 
@@ -10,8 +10,9 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       useFactory: () => {
+        const logger = new Logger('DatabaseModule');
         const url = process.env.DATABASE_URL;
-        console.log('📦 DATABASE_URL cargada desde .env:', url);
+        logger.debug('📦 DATABASE_URL cargada desde .env');
         return {
           type: 'postgres',
           url,
