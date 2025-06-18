@@ -31,6 +31,14 @@
 $ npm install
 ```
 
+Create a `.env` file using the provided example and update the values for your
+database connection and JWT secret:
+
+```bash
+cp .env.example .env
+# edit .env with your settings
+```
+
 ## Compile and run the project
 
 ```bash
