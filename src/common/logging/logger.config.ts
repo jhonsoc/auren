@@ -4,9 +4,7 @@ import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
 import { WinstonModuleOptions } from 'nest-winston';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
-import 'winston-loggly-bulk';
-
-const { Loggly } = require('winston-loggly-bulk');
+import { Loggly } from 'winston-loggly-bulk';
 
 
 export const loggerConfig: WinstonModuleOptions = {
