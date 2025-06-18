@@ -18,4 +18,4 @@ async function bootstrap() {
   const logger = new Logger('Auren');
   logger.log(`✅ Backend corriendo en http://localhost:${port}`);
 }
-bootstrap();
+void bootstrap();
